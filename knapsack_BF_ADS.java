@@ -71,4 +71,65 @@ class Queue {
 
 }   // end of queue class
 
+void knapsack2(int n, int p[],int w[], int W, int maxprofit){
+
+    Queue Q = new Queue();  // creates instance of queue
+    Node u,v;
+
+    Q = null;   // initializes Queue
+    v.level = 0;    // initializes v as root since all variables are 0
+    v.profit = 0;
+    v.weight = 0;
+
+    maxprofit = 0;
+    Q.enqueue(v);
+    while(Q == null){
+        Q.dequeue(v);
+        u.level = = v.level+1;
+        u.weight = v.weight + w[u.level];
+        u.profit = v.profit + p[u.level];
+
+        if(u.weight <= W && u.profit > maxprofit) {
+            maxprofit = u.profit;
+        }
+        if(bound(u) > maxprofit) {
+            Q.enqueue(u);
+        }
+        u.weight = v.weight;
+        u.profit = v.profit;
+        if(bound(u)>maxprofit) {
+            Q.enqueue(u);
+        }
+
+    }
+
+}
+
+float bound(Node u) {
+    int j,k;
+    int totweight;
+    float result;
+    if(u.weight >= W) {
+        return 0;
+    }
+    else {
+        result = u.profit;
+        j = u.level + 1;
+        totweight = u.weight;
+        while(j <= n && totweight + w[j] <= W) {
+            totweight = totweight + w[j];
+            result = result + p[j];
+            j++;
+        }
+        k = j;
+        if(k <= n) {
+            result = result + (W - totweight) + p[k]
+        }
+
+        return result;
+
+    }   // end of while
+}       // end of bound class
+
+
 
