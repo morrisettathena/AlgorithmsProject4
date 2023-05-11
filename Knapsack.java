@@ -1,12 +1,12 @@
 //Author: DJ Trevens
 
 public class Knapsack {
-    public static int n = 5;
+    public static int n = 4;
     public static int numbest = 0;
     public static int maxprofit = 0;
     public static int nodesVisited = 0;
-    public static boolean[] bestset = new boolean[n];
-    public static boolean[] include = new boolean[n];
+    public static boolean[] bestset = new boolean[n + 1];
+    public static boolean[] include = new boolean[n + 1];
 
 
 
@@ -73,7 +73,7 @@ public class Knapsack {
         System.out.println("Items for set 3: ");
         for (int j = 0; j < bestset.length; j++){
             if (bestset[j]){
-                System.out.println("item " + (j + 1) + ",");
+                System.out.println("item " + (j) + ",");
             }
         }
         System.out.println("There were " + nodesVisited + " nodes visited.");
@@ -86,7 +86,7 @@ public class Knapsack {
         System.out.println("Items for set 4: ");
         for (int j = 0; j < bestset.length; j++){
             if (bestset[j]){
-                System.out.println("item " + (j + 1) + ",");
+                System.out.println("item " + (j) + ",");
             }
         }
         System.out.println("There were " + nodesVisited + " nodes visited.");
@@ -99,7 +99,7 @@ public class Knapsack {
         System.out.println("Items for set 5: ");
         for (int j = 0; j < bestset.length; j++){
             if (bestset[j]){
-                System.out.println("item " + (j + 1) + ",");
+                System.out.println("item " + (j) + ",");
             }
         }
         System.out.println("There were " + nodesVisited + " nodes visited.");
@@ -113,8 +113,7 @@ public class Knapsack {
         int[] p = set[0];
         int[] w = set[1];
 
-        if (weight <= W && profit > maxprofit){
-            System.out.println(i);
+        if (weight <= W && profit > maxprofit){l
             maxprofit = profit;
             numbest = i;
             for (int x = 0; x < include.length; x++){
@@ -144,13 +143,13 @@ public class Knapsack {
             j = i + 1;
             bound = profit;
             totweight = weight;
-            while (j < n && totweight + w[j] <= W){
+            while (j <= n && totweight + w[j] <= W){
                 totweight = totweight + w[j];
                 bound = bound + p[j];
                 j++;
             }
             k = j;
-            if (k < n){
+            if (k <= n){
                 bound = bound + (W - totweight) * p[k]/w[k];
             }
             
