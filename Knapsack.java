@@ -1,109 +1,102 @@
 //Author: DJ Trevens
 
+import java.io.FileNotFoundException;
+import java.util.Arrays;
+import java.io.File;
+
 public class Knapsack {
-    public static int n = 4;
+    public static int n = 1000;
     public static int numbest = 0;
     public static int maxprofit = 0;
     public static int nodesVisited = 0;
     public static boolean[] bestset = new boolean[n + 1];
     public static boolean[] include = new boolean[n + 1];
 
-    public static void main(String[] args){
-        int[][] set1 = {
-            {0, 40, 30, 50, 10},
-            {0, 2, 5, 10, 5}
-        };
-        int set1W = 16;
+    public static void main(String[] args) throws FileNotFoundException{
 
-        int[][] set2 = {
-            {0, 40, 30, 50, 10},
-            {0, 2, 5, 10, 5}
-        };
-        int set2W = 18;
-
-        int[][] set3 = {
-            {0, 50, 55, 15, 50},
-            {0, 2, 10, 5, 20}
-        };
-        int set3W = 25;
-
-        int[][] set4 = {
-            {0, 50, 55, 15, 50},
-            {0, 2, 10, 5, 20}
-        };
-        int set4W = 40;
-
-        int[][] set5 = {
-            {0, 1, 1, 1, 1},
-            {0, 2, 3, 4, 5}
-        };
-        int set5W = 1;
+        System.out.println("GETTING DATA FOR BACKTRACK");
 
 
-        knapsack(0, set1, set1[0][0], set1[1][0], set1W);
-        System.out.println("Max profit for set 1: " + maxprofit);
-        System.out.println("Items for set 1: ");
-        for (int j = 0; j < bestset.length; j++){
-            if (bestset[j]){
-                System.out.println("item " + (j + 1) + ",");
-            }
-        }
-        System.out.println("There were " + nodesVisited + " nodes visited.");
-        System.out.println();
+        File folder = new File("data");
+        File[] FILES = folder.listFiles();
+        Arrays.sort(FILES, (a, b) -> Integer.compare(
+            Integer.parseInt(a.getName().substring(0, a.getName().length()-4)), 
+            Integer.parseInt(b.getName().substring(0, b.getName().length()-4))
+        ));
 
-        resetVariables();
+        int[] weights = {0, 2, Integer.MAX_VALUE};
 
-        knapsack(0, set2, set2[0][0], set2[1][0], set2W);
-        System.out.println("Max profit for set 2: " + maxprofit);
-        System.out.println("Items for set 2: ");
-        for (int j = 0; j < bestset.length; j++){
-            if (bestset[j]){
-                System.out.println("item " + (j + 1) + ",");
-            }
-        }
-        System.out.println("There were " + nodesVisited + " nodes visited.");
-        System.out.println();
 
-        resetVariables();
-
-        knapsack(0, set3, set3[0][0], set3[1][0], set3W);
-        System.out.println("Max profit for set 3: " + maxprofit);
-        System.out.println("Items for set 3: ");
-        for (int j = 0; j < bestset.length; j++){
-            if (bestset[j]){
-                System.out.println("item " + (j) + ",");
-            }
-        }
-        System.out.println("There were " + nodesVisited + " nodes visited.");
-        System.out.println();
-
-        resetVariables();
-
-        knapsack(0, set4, set4[0][0], set4[1][0], set4W);
-        System.out.println("Max profit for set 4: " + maxprofit);
-        System.out.println("Items for set 4: ");
-        for (int j = 0; j < bestset.length; j++){
-            if (bestset[j]){
-                System.out.println("item " + (j) + ",");
-            }
-        }
-        System.out.println("There were " + nodesVisited + " nodes visited.");
-        System.out.println();
-
-        resetVariables();
-
-        knapsack(0, set5, set5[0][0], set5[1][0], set5W);
-        System.out.println("Max profit for set 5: " + maxprofit);
-        System.out.println("Items for set 5: ");
-        for (int j = 0; j < bestset.length; j++){
-            if (bestset[j]){
-                System.out.println("item " + (j) + ",");
-            }
-        }
-        System.out.println("There were " + nodesVisited + " nodes visited.");
-        System.out.println();
+        String nf = "";
+        String sf = "";
+        String af = "";
         
-        resetVariables();
+        for (int i = 0; i < FILES.length; i++) {
+            int[][] set = readIn.readData(FILES[i].getPath());
+            n = set[0].length-1;
+
+
+            for (int j = 0; j < weights.length; j++) {
+                int weight = 0;
+
+                String typeString = "";
+                String shortString = "";
+                if (weights[j] == 0){
+                    typeString = " where no items fit";
+                    shortString = "nf";
+                    weight = weights[j];
+                }
+                else if (weights[j] == Integer.MAX_VALUE) {
+                    typeString = " where all items fit";
+                    shortString = "af";
+                    weight = weights[j];
+                } else {
+                    typeString = " where some items fit";
+                    shortString = "sf";
+                    weight = n*weights[j];
+                }
+
+                bestset = new boolean[n+1];
+                include = new boolean[n+1];
+
+                long start = System.nanoTime();
+                knapsack(0, set, set[0][0], set[1][0], weight);
+                long end = System.nanoTime();
+
+                if (weights[j] == 0) {
+                    nf += String.format("%d %d %d\n", end-start, maxprofit, nodesVisited);
+                } else if (weights[j] == Integer.MAX_VALUE) {
+                    af += String.format("%d %d %d\n", end-start, maxprofit, nodesVisited);
+                } else {
+                    sf += String.format("%d %d %d\n", end-start, maxprofit, nodesVisited);
+                }
+
+                /*System.out.println(FILES[i].getName() + ":" + shortString);
+                System.out.print(end-start + " ");
+                System.out.print(maxprofit + " ");
+                System.out.println(nodesVisited);*/
+
+                /*System.out.println("For set " + FILES[i].getName() + typeString);
+                System.out.println("Time elapsed: " + Long.toString(end-start) + " nanoseconds");
+                System.out.println("Max profit for set 1: " + maxprofit);
+
+                /*System.out.println("Items for set 1: ");
+                for (int j = 0; j < bestset.length; j++){
+                    if (bestset[j]){
+                        System.out.println("item " + (j + 1) + ",");
+                    }
+                }
+                System.out.println("There were " + nodesVisited + " nodes visited.");*/
+                //System.out.println();
+        
+                resetVariables();
+            }
+        }
+
+        System.out.println("no fit: \n" + nf);
+        System.out.println("some fit: \n" + sf);
+        System.out.println("all fit: \n" + af);
+        
     }
 
     public static void knapsack(int i, int[][] set, int profit, int weight, int W){
@@ -160,4 +153,6 @@ public class Knapsack {
         maxprofit = 0;
         nodesVisited = 0;
     }
+
+    
 }

@@ -38,9 +38,4 @@ public class Node implements Comparable<Node> {
         String v = String.format("%f", this.bound);
         return v;
     }
-
-
-    
-
-
 }

@@ -1,51 +1,76 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Collections;
 import java.util.PriorityQueue;
-
+import java.util.Arrays;
 
 public class knapsack62 {
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws FileNotFoundException{
 
-        int[][] set1 = {
-            {0, 40, 30, 50, 10},
-            {0, 2, 5, 10, 5}
-        };
-        int set1W = 16;
+        System.out.println("GETTING DATA FOR 6.2");
 
-        int[][] set2 = {
-            {0, 40, 30, 50, 10},
-            {0, 2, 5, 10, 5}
-        };
-        int set2W = 18;
+        File folder = new File("data");
+        File[] FILES = folder.listFiles();
+        Arrays.sort(FILES, (a, b) -> Integer.compare(
+            Integer.parseInt(a.getName().substring(0, a.getName().length()-4)), 
+            Integer.parseInt(b.getName().substring(0, b.getName().length()-4))
+        ));
 
-        int[][] set3 = {
-            {0, 50, 55, 15, 50},
-            {0, 2, 10, 5, 20}
-        };
-        int set3W = 25;
+        int[] weights = {0, 2, Integer.MAX_VALUE};
 
-        int[][] set4 = {
-            {0, 50, 55, 15, 50},
-            {0, 2, 10, 5, 20}
-        };
-        int set4W = 40;
+        String nf = "";
+        String sf = "";
+        String af = "";
 
-        int[][] set5 = {
-            {0, 1, 1, 1, 1},
-            {0, 2, 3, 4, 5}
-        };
-        int set5W = 1;
+        for (int i = 0; i < FILES.length; i++) {
+            int[][] set = readIn.readData(FILES[i].getPath());
+            int n = set[0].length-1;
 
-        
+            for (int j = 0; j < weights.length; j++) {
+                int weight = 0;
 
-        knapsack(set1[0], set1[1], set1W);
-        knapsack(set2[0], set2[1], set2W);
-        knapsack(set3[0], set3[1], set3W);
-        knapsack(set4[0], set4[1], set4W);
-        knapsack(set5[0], set5[1], set5W);
+                String typeString = "";
+                String shortString = "";
+                if (weights[j] == 0){
+                    typeString = " where no items fit";
+                    shortString = "nf";
+                    weight = weights[j];
+                }
+                else if (weights[j] == Integer.MAX_VALUE) {
+                    typeString = " where all items fit";
+                    shortString = "af";
+                    weight = weights[j];
+                } else {
+                    typeString = " where some items fit";
+                    shortString = "sf";
+                    weight = n*weights[j];
+                }
+                long start = System.nanoTime();
+                int[] data = knapsack(set[0], set[1], weight);
+                long end = System.nanoTime();
+
+                if (weights[j] == 0) {
+                    nf += String.format("%d %d %d\n", end-start, data[0], data[1]);
+                } else if (weights[j] == Integer.MAX_VALUE) {
+                    af += String.format("%d %d %d\n", end-start, data[0], data[1]);
+                } else {
+                    sf += String.format("%d %d %d\n", end-start, data[0], data[1]);
+                }
+
+                /*System.out.println(FILES[i].getName() + ":" + shortString);
+                System.out.print(end-start + " ");
+                System.out.print(data[0] + " ");
+                System.out.println(data[1]);*/
+            }
+        }
+
+        System.out.println("no fit: \n" + nf);
+        System.out.println("some fit: \n" + sf);
+        System.out.println("all fit: \n" + af);
     }
 
-    public static void knapsack(int[] p, int[] w, int W) {
+    public static int[] knapsack(int[] p, int[] w, int W) {
         Node v = new Node();
 
         PriorityQueue<Node> PQ = new PriorityQueue<Node>();
@@ -93,10 +118,12 @@ public class knapsack62 {
                     PQ.add(y);
             }
         }
-        System.out.println("There was a total profit of " + maxprofit);
+
+        return  new int[] {maxprofit, nodesVisited};
+        /*System.out.println("There was a total profit of " + maxprofit);
         printPath(currentpath);
         System.out.println("The number of nodes visited was " + nodesVisited);
-        System.out.println();
+        System.out.println();*/
     }
 
     public static float bound(Node u, int[] p, int[] w, int W) {
