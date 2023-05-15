@@ -24,112 +24,154 @@ Outputs: an integer maxprofit that is the sum of the profits in an optimal set.
 
 */
 
-class Node{  
-    int key;                                    // defines a node
-    int level;                                     // info in node
-    int profit;
-    int weight;
-    Node next;                                   // link to next node
 
-    public Node(int key){                        // allows ability to create new nodes
-        this.key = key;
-        this.next = null;
-    }
-}                                               // end of node class
+import java.util.Collections;
+import java.util.LinkedList;
 
-class Queue {
-    Node front,rear;                                   // creates nodes for LL
+public class knapsack_BF_ADS {
 
-    public Queue() {this.front = this.rear = null; }
+public static void knapsack2(int[] p, int[] w, int W) {
 
-    void enqueue(int key){
-        
-        Node temp = new Node(key);  // creates new node
+    LinkedList<Node> PQ = new LinkedList<Node>();
+    Node v = new Node();
 
-        if(this.rear ==null ){      // if queue is empty then new node is front+rear
-            this.front = this.rear = temp;
-            return;
-        }
-
-        this.rear.next = temp;
-        this.rear = temp;
-
-    }
-
-    void dequeue() {
-        if(this.front == null) {    // if queue is empty return 
-            return;
-        }
-
-        Node temp = this.front;     // store previous front
-        this.front = this.front.next;   // shift queue foward since a queue is FIFO
-
-        if(this.front == null) {    // if when a node is removed and the next front is null the queue is empty and rear = null
-            this.rear = null;
-        }
-    }   
-
-}   // end of queue class
-
-void knapsack2(int n, int p[],int w[], int W, int maxprofit){
-
-    Queue Q = new Queue();  // creates instance of queue
-    Node u,v;
-
-    Q = null;   // initializes Queue
-    v.level = 0;    // initializes v as root since all variables are 0
+    v.level = 0;
     v.profit = 0;
     v.weight = 0;
+    v.included = newBool(w.length);
+    boolean[] currentpath = {};
+    int maxprofit = 0;
+    int nodesVisited = 0;
 
-    maxprofit = 0;
-    Q.enqueue(v);
-    while(Q == null){
-        Q.dequeue(v);
-        u.level = = v.level+1;
+    PQ.add(v);
+    while(!PQ.isEmpty()) {
+        nodesVisited++;
+        v = PQ.pop();
+        Node u = new Node();
+        u.level = v.level +1;
         u.weight = v.weight + w[u.level];
         u.profit = v.profit + p[u.level];
+        u.included = copyBool(v.included);
+        u.included[u.level] = true;
 
-        if(u.weight <= W && u.profit > maxprofit) {
+        if(u.weight<= W && u.profit > maxprofit) {
             maxprofit = u.profit;
+            currentpath = u.included;
         }
-        if(bound(u) > maxprofit) {
-            Q.enqueue(u);
+
+        if (bound(u, p, w,W) > maxprofit) {
+            PQ.add(u);
         }
+
+        u = new Node();
+        u.level = v.level +1; 
         u.weight = v.weight;
         u.profit = v.profit;
-        if(bound(u)>maxprofit) {
-            Q.enqueue(u);
+        u.included = copyBool(v.included);
+        u.included[u.level] = false;
+        if(bound(u, p, w,W) > maxprofit) {
+            PQ.add(u);
         }
-
     }
+
+    System.out.println("There was a total profit of " + maxprofit);
+    printPath(currentpath);
+    System.out.println("The number of nodes visited was " + nodesVisited);
+    System.out.println();
 
 }
 
-float bound(Node u) {
-    int j,k;
+
+
+public static float bound(Node u, int[] p, int[] w, int W) {
+    int j, k;
     int totweight;
+    int n = w.length-1;
     float result;
-    if(u.weight >= W) {
+
+    if (u.weight >= W)
         return 0;
-    }
     else {
         result = u.profit;
         j = u.level + 1;
         totweight = u.weight;
-        while(j <= n && totweight + w[j] <= W) {
+        while (j <= n && totweight + w[j] <= W) {
             totweight = totweight + w[j];
             result = result + p[j];
             j++;
         }
         k = j;
-        if(k <= n) {
-            result = result + (W - totweight) + p[k]
-        }
-
+        if (k <= n)
+            result = result + (W-totweight) * p[k] / w[k];
         return result;
+    }
+}
 
-    }   // end of while
-}       // end of bound class
+public static boolean[] newBool(int i) {
+    boolean[] path = new boolean[i];
+    for (int j = 0; j < i; j++) {
+        path[j] = false;
+    }
+    return path;
+}
 
+public static boolean[] copyBool(boolean[] b) {
+    boolean[] newSet = newBool(b.length);
+    for (int i = 1; i < b.length; i++) {
+        newSet[i] = b[i];
+    }
+    return newSet;
 
+}
 
+public static void printPath(boolean[] currentpath) {
+    String s = "";
+    for (int i = 1; i < currentpath.length; i++) {
+        if (currentpath[i])
+            s += i + " ";
+    }
+    System.out.println("The items chosen were " + s);
+}
+
+public static void main(String[] args) {
+
+    int[][] set1 = {
+        {0, 40, 30, 50, 10},
+        {0, 2, 5, 10, 5}
+    };
+    int set1W = 16;
+
+    int[][] set2 = {
+        {0, 40, 30, 50, 10},
+        {0, 2, 5, 10, 5}
+    };
+    int set2W = 18;
+
+    int[][] set3 = {
+        {0, 50, 55, 15, 50},
+        {0, 2, 10, 5, 20}
+    };
+    int set3W = 25;
+
+    int[][] set4 = {
+        {0, 50, 55, 15, 50},
+        {0, 2, 10, 5, 20}
+    };
+    int set4W = 40;
+
+    int[][] set5 = {
+        {0, 1, 1, 1, 1},
+        {0, 2, 3, 4, 5}
+    };
+    int set5W = 1;
+
+    knapsack2(set1[0], set1[1], set1W);
+    knapsack2(set2[0], set2[1], set2W);
+    knapsack2(set3[0], set3[1], set3W);
+    knapsack2(set4[0], set4[1], set4W);
+    knapsack2(set5[0], set5[1], set5W);
+
+}
+
+}
+ 
