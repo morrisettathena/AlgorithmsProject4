@@ -171,7 +171,7 @@ public static void main(String[] args) {
     knapsack2(set4[0], set4[1], set4W);
     knapsack2(set5[0], set5[1], set5W);
 
-}
+    }
 
 }
  

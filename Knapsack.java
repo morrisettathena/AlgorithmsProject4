@@ -8,8 +8,6 @@ public class Knapsack {
     public static boolean[] bestset = new boolean[n + 1];
     public static boolean[] include = new boolean[n + 1];
 
-
-
     public static void main(String[] args){
         int[][] set1 = {
             {0, 40, 30, 50, 10},
@@ -113,7 +111,7 @@ public class Knapsack {
         int[] p = set[0];
         int[] w = set[1];
 
-        if (weight <= W && profit > maxprofit){l
+        if (weight <= W && profit > maxprofit){
             maxprofit = profit;
             numbest = i;
             for (int x = 0; x < include.length; x++){
